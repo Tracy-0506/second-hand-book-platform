@@ -1,0 +1,2 @@
+const app = getApp();
+Page({ data: { orders: [] }, onShow() { this.setData({ orders: app.globalData.orders }); }, update(id, status) { const order = app.globalData.orders.find(o => o.id === Number(id)); if (order) order.status = status; app.saveData(); this.setData({ orders: app.globalData.orders }); }, complete(e) { this.update(e.currentTarget.dataset.id, '已完成'); }, refund(e) { wx.showModal({ title: '申请退款', content: '确认在面交前申请退款吗？', success: r => { if (r.confirm) this.update(e.currentTarget.dataset.id, '已退款'); } }); } });

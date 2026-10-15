@@ -1,0 +1,27 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/publish/publish",
+    "pages/orders/orders",
+    "pages/profile/profile",
+    "pages/admin/admin"
+  ],
+  "window": {
+    "navigationBarTitleText": "二手书平台",
+    "navigationBarBackgroundColor": "#eaf8f0",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fffaf1"
+  },
+  "tabBar": {
+    "color": "#7a8b85",
+    "selectedColor": "#1f8f68",
+    "backgroundColor": "#fffaf1",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/publish/publish", "text": "发布" },
+      { "pagePath": "pages/orders/orders", "text": "订单" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  }
+}
