@@ -19,6 +19,7 @@ app.use('/api/upload', require('./routes/upload'));
 app.use((err, req, res, next) => {
   console.error(err);
   if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ message: '图片不能超过5MB' });
+  if (err.code === 'INVALID_IMAGE_TYPE') return res.status(400).json({ code: err.code, message: err.message });
   if (err.code === 'CONTENT_REJECTED') return res.status(400).json({ code: err.code, message: err.message });
   if (err.message?.includes('内容安全审核已开启')) return res.status(503).json({ code: 'CONTENT_SAFETY_NOT_CONFIGURED', message: err.message });
   if (err.response?.data?.errcode) return res.status(502).json({ code: 'WECHAT_CONTENT_SAFETY_ERROR', message: err.message });

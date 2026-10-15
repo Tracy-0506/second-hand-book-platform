@@ -22,11 +22,25 @@ router.post('/', auth(), async (req, res, next) => {
 router.get('/mine', auth(), async (req, res, next) => { try { const [rows] = await pool.execute('SELECT * FROM orders WHERE buyer_id = ? OR seller_id = ? ORDER BY created_at DESC', [req.user.id, req.user.id]); res.json({ items: rows }); } catch (err) { next(err); } });
 
 router.post('/:id/complete', auth(), async (req, res, next) => {
-  try { const [result] = await pool.execute('UPDATE orders SET status = \'已完成\' WHERE id = ? AND buyer_id = ? AND status = \'待面交\'', [req.params.id, req.user.id]); if (!result.affectedRows) return res.status(404).json({ message: '订单不存在、状态不正确或无权限' }); await pool.execute('UPDATE books b JOIN orders o ON o.book_id = b.id SET b.status = \'已完成\' WHERE o.id = ?', [req.params.id]); res.json({ message: '已确认收货' }); } catch (err) { next(err); }
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [result] = await conn.execute('UPDATE orders SET status = \'已完成\' WHERE id = ? AND buyer_id = ? AND status = \'待面交\'', [req.params.id, req.user.id]);
+    if (!result.affectedRows) { await conn.rollback(); return res.status(404).json({ message: '订单不存在、状态不正确或无权限' }); }
+    await conn.execute('UPDATE books b JOIN orders o ON o.book_id = b.id SET b.status = \'已完成\' WHERE o.id = ?', [req.params.id]);
+    await conn.commit(); res.json({ message: '已确认收货' });
+  } catch (err) { await conn.rollback(); next(err); } finally { conn.release(); }
 });
 
 router.post('/:id/refund', auth(), async (req, res, next) => {
-  try { const [result] = await pool.execute('UPDATE orders SET status = \'已退款\' WHERE id = ? AND buyer_id = ? AND status = \'待面交\'', [req.params.id, req.user.id]); if (!result.affectedRows) return res.status(404).json({ message: '订单不存在、已完成或无权限' }); await pool.execute('UPDATE books b JOIN orders o ON o.book_id = b.id SET b.status = \'在售\' WHERE o.id = ?', [req.params.id]); res.json({ message: '退款成功' }); } catch (err) { next(err); }
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [result] = await conn.execute('UPDATE orders SET status = \'已退款\' WHERE id = ? AND buyer_id = ? AND status = \'待面交\'', [req.params.id, req.user.id]);
+    if (!result.affectedRows) { await conn.rollback(); return res.status(404).json({ message: '订单不存在、已完成或无权限' }); }
+    await conn.execute('UPDATE books b JOIN orders o ON o.book_id = b.id SET b.status = \'在售\' WHERE o.id = ?', [req.params.id]);
+    await conn.commit(); res.json({ message: '退款成功' });
+  } catch (err) { await conn.rollback(); next(err); } finally { conn.release(); }
 });
 
 router.post('/:id/admin-refund', auth(), adminOnly, async (req, res, next) => {
