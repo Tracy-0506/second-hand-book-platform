@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>二手书平台</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">校园循环 · 重庆南山</span>
+        <h1>二手书平台</h1>
+      </div>
+      <button class="avatar" data-tab="profile">我</button>
+    </header>
+
+    <main id="app" class="content"></main>
+
+    <nav class="tabbar">
+      <button class="tab active" data-tab="home"><span>⌂</span>首页</button>
+      <button class="tab" data-tab="publish"><span>＋</span>发布</button>
+      <button class="tab" data-tab="orders"><span>▣</span>订单</button>
+      <button class="tab" data-tab="profile"><span>◎</span>我的</button>
+    </nav>
+  </div>
+
+  <div id="modal-root"></div>
+  <script src="app.js"></script>
+</body>
+</html>
