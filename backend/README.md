@@ -21,7 +21,7 @@ npm install
 创建 MySQL 数据库用户后执行：
 
 ```powershell
-mysql -u root -p < sql/001_init.sql
+cmd /c "\"C:\\Program Files\\MySQL\\MySQL Server 26.7\\bin\\mysql.exe\" --default-character-set=utf8mb4 -u root -p < sql\\001_init.sql"
 ```
 
 这个命令会创建数据库、用户表、书籍表和订单表。生产环境建议使用数据库迁移工具，不要重复执行会改变数据的脚本。
